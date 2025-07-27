@@ -39,10 +39,14 @@ export default async function SubdomainPage({
 
   // If custom design exists, render it following v0 template pattern
   if (subdomainData.design?.content) {
-    // Follow v0 template logic exactly: demo -> url -> fallback
+    // Priority: deployment URL (live site) -> demo -> content -> fallback
     let generatedApp = '';
+    let isLiveDeployment = false;
     
-    if (subdomainData.design.demo) {
+    if (subdomainData.design.deployment?.status === 'completed' && subdomainData.design.deployment.webUrl) {
+      generatedApp = subdomainData.design.deployment.webUrl;
+      isLiveDeployment = true;
+    } else if (subdomainData.design.demo) {
       generatedApp = subdomainData.design.demo;
     } else if (subdomainData.design.content) {
       generatedApp = subdomainData.design.content;
@@ -73,6 +77,12 @@ export default async function SubdomainPage({
     return (
       <div className="min-h-screen">
         <div className="absolute top-4 right-4 z-10 flex gap-2">
+          {isLiveDeployment && (
+            <div className="bg-green-100 text-green-800 px-3 py-2 rounded-lg text-sm font-medium shadow-sm border border-green-200 flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              Live Site
+            </div>
+          )}
           <Link
             href={`/s/${subdomain}/design`}
             className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg text-sm text-gray-700 hover:text-gray-900 transition-colors shadow-sm border flex items-center gap-2"

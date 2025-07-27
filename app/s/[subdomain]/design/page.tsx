@@ -6,13 +6,13 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 interface DesignPageProps {
-  params: {
+  params: Promise<{
     subdomain: string;
-  };
+  }>;
 }
 
 export default async function DesignPage({ params }: DesignPageProps) {
-  const { subdomain } = params;
+  const { subdomain } = await params;
   const data = await getSubdomainData(subdomain);
 
   if (!data) {

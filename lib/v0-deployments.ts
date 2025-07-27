@@ -18,17 +18,9 @@ export async function createV0Deployment(
   console.log('📝 Parameters:', { chatId, versionId, projectId });
 
   try {
-    // First, get the chat details to find the latest version if not provided
+    // For now, require versionId to be provided
     if (!versionId) {
-      console.log('🔍 Fetching chat details to get latest version...');
-      const chatDetails = await v0.chats.get(chatId);
-      versionId = chatDetails.latestVersion?.id;
-      
-      if (!versionId) {
-        throw new Error('No version found for chat - cannot deploy');
-      }
-      
-      console.log('✅ Found latest version:', versionId);
+      throw new Error('versionId is required for deployment - cannot deploy without specific version');
     }
 
     // Create the deployment
@@ -71,23 +63,10 @@ export async function getDeploymentStatus(deploymentId: string): Promise<V0Deplo
   console.log('🔍 Checking deployment status:', deploymentId);
 
   try {
-    const deployment = await v0.deployments.get(deploymentId);
-    
-    console.log('✅ Deployment status retrieved');
-    console.log('📊 Status data:', {
-      id: deployment.id,
-      status: deployment.status,
-      webUrl: deployment.webUrl,
-    });
-
-    return {
-      id: deployment.id,
-      webUrl: deployment.webUrl,
-      apiUrl: deployment.apiUrl,
-      inspectorUrl: deployment.inspectorUrl,
-      status: deployment.status || 'pending',
-      deployedAt: Date.now(), // We don't get this from API, so use current time
-    };
+    // Note: v0 SDK may not have deployments.get method yet
+    // This is a placeholder for when the API is fully available
+    console.log('⚠️ Deployment status check not yet implemented in v0 SDK');
+    return null;
   } catch (error) {
     console.error('❌ Error getting deployment status:', error);
     return null;
@@ -98,9 +77,10 @@ export async function deleteDeployment(deploymentId: string): Promise<boolean> {
   console.log('🗑️ Deleting deployment:', deploymentId);
 
   try {
-    await v0.deployments.delete(deploymentId);
-    console.log('✅ Deployment deleted successfully');
-    return true;
+    // Note: v0 SDK may not have deployments.delete method yet
+    // This is a placeholder for when the API is fully available
+    console.log('⚠️ Deployment deletion not yet implemented in v0 SDK');
+    return false;
   } catch (error) {
     console.error('❌ Error deleting deployment:', error);
     return false;

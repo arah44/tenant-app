@@ -41,9 +41,7 @@ export async function generateLandingPage(prompt: string): Promise<V0GenerationR
     console.log('📊 Response data:', {
       id: response.id,
       url: response.url,
-      webUrl: response.webUrl,
-      previewUrl: response.previewUrl,
-      filesCount: response.files?.length || 0,
+      filesCount: response.latestVersion?.files?.length || 0,
       fullResponse: JSON.stringify(response, null, 2),
     });
 
@@ -54,12 +52,12 @@ export async function generateLandingPage(prompt: string): Promise<V0GenerationR
     const result = {
       chatId: response.id,
       content: response.url || '',
-      files: response.files?.map(file => ({
+      files: response.latestVersion?.files?.map(file => ({
         name: file.name || '',
         content: file.content || '',
       })) || [],
-      webUrl: response.webUrl,
-      previewUrl: response.previewUrl,
+      webUrl: (response as any).webUrl,
+      previewUrl: (response as any).previewUrl,
       demo: (response as any).demo, // Add demo URL
     };
 
@@ -98,20 +96,18 @@ export async function updateLandingPage(
     console.log('✅ v0 update response received');
     console.log('📊 Update response data:', {
       url: response.url,
-      webUrl: response.webUrl,
-      previewUrl: response.previewUrl,
-      filesCount: response.files?.length || 0,
+      filesCount: response.latestVersion?.files?.length || 0,
     });
 
     const result = {
       chatId,
       content: response.url || '',
-      files: response.files?.map(file => ({
+      files: response.latestVersion?.files?.map(file => ({
         name: file.name || '',
         content: file.content || '',
       })) || [],
-      webUrl: response.webUrl,
-      previewUrl: response.previewUrl,
+      webUrl: (response as any).webUrl,
+      previewUrl: (response as any).previewUrl,
       demo: (response as any).demo, // Add demo URL
     };
 
