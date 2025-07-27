@@ -3,7 +3,7 @@
 import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2, Loader2 } from 'lucide-react';
+import { Trash2, Loader2, Palette, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { deleteSubdomainAction } from '@/app/actions';
 import { rootDomain, protocol } from '@/lib/utils';
@@ -12,6 +12,7 @@ type Tenant = {
   subdomain: string;
   emoji: string;
   createdAt: number;
+  hasDesign?: boolean;
 };
 
 type DeleteState = {
@@ -85,22 +86,52 @@ function TenantGrid({
               </form>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="text-4xl">{tenant.emoji}</div>
               <div className="text-sm text-gray-500">
                 Created: {new Date(tenant.createdAt).toLocaleDateString()}
               </div>
             </div>
-            <div className="mt-4">
-              <a
-                href={`${protocol}://${tenant.subdomain}.${rootDomain}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline text-sm"
+            
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${tenant.hasDesign ? 'bg-green-500' : 'bg-gray-300'}`} />
+              <span className="text-sm text-gray-600">
+                {tenant.hasDesign ? 'Custom Design' : 'Default Page'}
+              </span>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="flex-1"
               >
-                Visit subdomain →
-              </a>
+                <a
+                  href={`${protocol}://${tenant.subdomain}.${rootDomain}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Visit
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                asChild
+                className="flex-1"
+              >
+                <a
+                  href={`${protocol}://${tenant.subdomain}.${rootDomain}/design`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Palette className="w-4 h-4 mr-2" />
+                  Design
+                </a>
+              </Button>
             </div>
           </CardContent>
         </Card>

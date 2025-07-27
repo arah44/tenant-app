@@ -29,6 +29,26 @@ export function isValidIcon(str: string) {
 type SubdomainData = {
   emoji: string;
   createdAt: number;
+  design?: {
+    chatId: string;
+    content: string;
+    files?: Array<{
+      name: string;
+      content: string;
+    }>;
+    webUrl?: string;
+    previewUrl?: string;
+    demo?: string;
+    deployment?: {
+      id: string;
+      webUrl: string;
+      apiUrl?: string;
+      inspectorUrl?: string;
+      status: 'pending' | 'completed' | 'failed';
+      deployedAt: number;
+    };
+    lastUpdated: number;
+  };
 };
 
 export async function getSubdomainData(subdomain: string) {
@@ -37,6 +57,26 @@ export async function getSubdomainData(subdomain: string) {
     `subdomain:${sanitizedSubdomain}`
   );
   return data;
+}
+
+export async function updateSubdomainDesign(
+  subdomain: string,
+  design: SubdomainData['design']
+) {
+  const sanitizedSubdomain = subdomain.toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const existingData = await getSubdomainData(subdomain);
+  
+  if (!existingData) {
+    throw new Error('Subdomain not found');
+  }
+
+  const updatedData: SubdomainData = {
+    ...existingData,
+    design
+  };
+
+  await redis.set(`subdomain:${sanitizedSubdomain}`, updatedData);
+  return updatedData;
 }
 
 export async function getAllSubdomains() {
@@ -55,7 +95,8 @@ export async function getAllSubdomains() {
     return {
       subdomain,
       emoji: data?.emoji || '❓',
-      createdAt: data?.createdAt || Date.now()
+      createdAt: data?.createdAt || Date.now(),
+      hasDesign: !!data?.design
     };
   });
 }
